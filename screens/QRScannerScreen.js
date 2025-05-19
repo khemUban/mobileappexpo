@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 
-const QRScanner = () => {
-  const [facing, getFacing] = useState("back");
+const QRScannerScreen = () => {
+  const [facing, setFacing] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
 
@@ -103,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QRScanner;
+export default QRScannerScreen;
