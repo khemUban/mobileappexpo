@@ -1,0 +1,136 @@
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+
+const dummyViolators = [
+  {
+    id: "1",
+    studentId: "2023-00123",
+    violations: ["No Black Shoes"],
+  },
+  {
+    id: "2",
+    studentId: "2023-00456",
+    violations: ["Improper Haircut"],
+  },
+  {
+    id: "3",
+    studentId: "2023-00789",
+    violations: ["No ID"],
+  },
+  {
+    id: "4",
+    studentId: "2023-00891",
+    violations: ["Wrong Uniform"],
+  },
+  {
+    id: "5",
+    studentId: "2023-00912",
+    violations: ["No School Patch"],
+  },
+];
+
+export default function TodaysViolatorsScreen({ navigation }) {
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <View style={styles.avatarContainer}>
+        <MaterialIcons name="person" size={36} color="#0047AB" />
+      </View>
+      <View style={styles.details}>
+        <Text style={styles.info}>{item.studentId}</Text>
+        <View style={styles.violationContainer}>
+          {item.violations.map((v, idx) => (
+            <View key={idx} style={styles.violationBadge}>
+              <Text style={styles.violationText}>⚠ {v}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={dummyViolators}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#f2f2f2",
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  backBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  backText: {
+    marginLeft: 5,
+    color: "#0047AB",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#0047AB",
+    letterSpacing: 1,
+  },
+  card: {
+    flexDirection: "row",
+    backgroundColor: "#ffffff",
+    alignItems: "flex-start",
+    paddingHorizontal: 30,
+    paddingVertical: 20,
+    marginBottom: 15,
+    borderRadius: 10,
+  },
+  avatarContainer: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#E3EAFD",
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 15,
+  },
+  details: {
+    flex: 1,
+  },
+  info: {
+    fontSize: 14,
+    color: "#555",
+    fontWeight: "700",
+  },
+  violationContainer: {
+    marginTop: 8,
+  },
+  violationBadge: {
+    backgroundColor: "#FFE5E5",
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    marginBottom: 5,
+  },
+  violationText: {
+    color: "#B00020",
+    fontSize: 13,
+  },
+});

@@ -7,11 +7,11 @@ import SettingsScreen from "../screens/SettingsScreen";
 import { AuthContext } from "../context/AuthContext";
 
 const user = {
-  avatar:
-    "https://ui-avatars.com/api/?name=Guard+One&background=0D8ABC&color=fff",
-  name: "Guard 1",
+  avatar: require("../assets/def-logo.jpg"),
+  name: "Guard One",
   email: "occguard1@example.com",
 };
+
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +32,7 @@ export default function BottomTabs({ navigation }) {
           options={{
             headerTitle: () => (
               <View style={styles.headerContainer}>
-                <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                <Image source={user.avatar} style={styles.avatar} />
                 <View>
                   <Text style={styles.name}>{user.name}</Text>
                   <Text style={styles.email}>{user.email}</Text>
@@ -60,6 +60,7 @@ export default function BottomTabs({ navigation }) {
             ),
           }}
         />
+        
       </Tab.Navigator>
     </View>
   );
@@ -82,8 +83,9 @@ const styles = StyleSheet.create({
   avatar: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    marginRight: 10,
+    borderRadius: 50,
+    borderColor: "#023473",
+    borderWidth: 1,
   },
   name: {
     fontWeight: "bold",
