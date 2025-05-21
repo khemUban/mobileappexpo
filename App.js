@@ -1,27 +1,17 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import { AuthProvider } from "./context/AuthContext";
 import { Provider as PaperProvider } from "react-native-paper";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomTabs from "./navigation/BottomTabs";
-import QRScannerScreen from "./screens/QRScannerScreen";
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-
-const Stack = createNativeStackNavigator();
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import MainApp from "./MainApp";
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <PaperProvider>
-        <SafeAreaProvider>
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="MainTabs" component={BottomTabs} />
-              <Stack.Screen name="QRScannerScreen" component={QRScannerScreen} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </SafeAreaProvider>
-      </PaperProvider>
-    </GestureHandlerRootView>
+    <PaperProvider>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <MainApp />
+        </AuthProvider>
+      </SafeAreaProvider>
+    </PaperProvider>
   );
 }

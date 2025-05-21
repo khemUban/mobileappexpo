@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,9 +13,22 @@ const SLIDER_WIDTH = SCREEN_WIDTH * 0.8;
 const SLIDER_HEIGHT = 60;
 const SLIDE_THRESHOLD = SLIDER_WIDTH - 80;
 
-export default function CustomSliderButton({ onSlideComplete, text = "Slide to Confirm" }) {
+export default function CustomSliderButton({
+  onSlideComplete,
+  text = "Slide to Confirm",
+  resetTrigger,
+}) {
   const pan = useRef(new Animated.ValueXY()).current;
   const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    setIsComplete(false);
+    Animated.timing(pan, {
+      toValue: { x: 0, y: 0 },
+      duration: 150,
+      useNativeDriver: false,
+    }).start();
+  }, [resetTrigger]);
 
   const panResponder = useRef(
     PanResponder.create({

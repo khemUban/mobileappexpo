@@ -4,34 +4,60 @@ import {
   Text,
   Button,
   StyleSheet,
-  TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 
-const QRScannerScreen = () => {
+const QRScannerScreen = ({ navigation }) => {
   const [facing, setFacing] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (!permission) return <View />;
-
   if (!permission.granted) {
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
-          We need your permission to access the camera
+          We need your permission to access the camera.
         </Text>
         <Button title="Grant Permission" onPress={requestPermission} />
       </View>
     );
   }
 
-  const handleScan = ({ data, type }) => {
-    if (!scanned) {
-      setScanned(true);
-      Alert.alert("Scanned Data", `${data}`);
-      setTimeout(() => setScanned(false), 3000);
+  const handleScan = async ({ data }) => {
+    if (scanned) return;
+    setScanned(true);
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "http://192.168.1.18:8000/api/students/verify-qr",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ scannedData: data }),
+        }
+      );
+
+      const result = await response.json();
+      setLoading(false);
+
+      if (response.ok && result.exists) {
+        Alert.alert("Success", "Student found.", [
+          { text: "OK", onPress: () => navigation.goBack() },
+        ]);
+      } else {
+        Alert.alert("Not Found", result.message || "Student not found.");
+        setScanned(false);
+      }
+    } catch (error) {
+      console.error("Scan error:", error);
+      setLoading(false);
+      Alert.alert("Error", "Failed to verify scanned data. Please try again.");
+      setScanned(false);
     }
   };
 
@@ -59,11 +85,16 @@ const QRScannerScreen = () => {
       >
         <View style={styles.overlay}>
           <View style={styles.scanArea} />
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#fff" />
+              <Text style={styles.loadingText}>Verifying...</Text>
+            </View>
+          )}
         </View>
+
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.buttonText}>Flip Camera</Text>
-          </TouchableOpacity>
+          <Button title="Flip Camera" onPress={toggleCameraFacing} />
         </View>
       </CameraView>
     </View>
@@ -72,23 +103,8 @@ const QRScannerScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  message: { textAlign: "center", marginTop: 20 },
+  message: { textAlign: "center", marginTop: 20, fontSize: 16 },
   camera: { flex: 1 },
-  buttonContainer: {
-    position: "absolute",
-    bottom: 30,
-    alignSelf: "center",
-  },
-  button: {
-    backgroundColor: "black",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-  },
   overlay: {
     flex: 1,
     justifyContent: "center",
@@ -100,6 +116,27 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "white",
     borderRadius: 10,
+  },
+  loadingOverlay: {
+    position: "absolute",
+    top: "40%",
+    left: "25%",
+    right: "25%",
+    backgroundColor: "#000000aa",
+    borderRadius: 10,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#fff",
+    marginTop: 10,
+    fontSize: 16,
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
   },
 });
 
